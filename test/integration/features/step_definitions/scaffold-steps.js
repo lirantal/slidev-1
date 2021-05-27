@@ -16,3 +16,7 @@ Then('the scripts are defined', async function () {
     }
   );
 });
+
+Then('the framework dependencies are installed', async function () {
+  assert.deepEqual(this.results.dependencies, ['@slidev/cli', '@slidev/theme-default']);
+});

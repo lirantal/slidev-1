@@ -18,9 +18,10 @@ suite('scaffolder', () => {
   test('that the presentation is scaffolded', async () => {
     const projectRoot = any.string();
 
-    const {scripts} = await scaffold({projectRoot});
+    const {dependencies, scripts} = await scaffold({projectRoot});
 
     assert.calledWith(fs.writeFile, `${projectRoot}/slides.md`, '');
+    assert.deepEqual(dependencies, ['@slidev/cli', '@slidev/theme-default']);
     assert.deepEqual(
       scripts,
       {
