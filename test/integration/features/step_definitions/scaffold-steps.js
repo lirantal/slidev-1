@@ -29,7 +29,7 @@ info: |
 });
 
 Then('the scripts are defined', async function () {
-  assert.deepEqual(
+  assert.include(
     this.results.scripts,
     {
       dev: 'slidev',

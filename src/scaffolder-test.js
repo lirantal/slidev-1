@@ -2,6 +2,7 @@ import {promises as fs} from 'fs';
 import {assert} from 'chai';
 import sinon from 'sinon';
 import any from '@travi/any';
+import * as testingScaffolder from './testing-scaffolder';
 import scaffold from './scaffolder';
 
 suite('scaffolder', () => {
@@ -11,14 +12,20 @@ suite('scaffolder', () => {
     sandbox = sinon.createSandbox();
 
     sandbox.stub(fs, 'writeFile');
+    sandbox.stub(testingScaffolder, 'default');
   });
 
   teardown(() => sandbox.restore());
 
   test('that the presentation is scaffolded', async () => {
     const projectRoot = any.string();
+    const testingDevDependencies = any.listOf(any.word);
+    const testingScripts = any.simpleObject();
+    testingScaffolder.default
+      .withArgs({projectRoot})
+      .resolves({devDependencies: testingDevDependencies, scripts: testingScripts});
 
-    const {dependencies, scripts} = await scaffold({projectRoot});
+    const {dependencies, devDependencies, scripts} = await scaffold({projectRoot});
 
     assert.calledWith(
       fs.writeFile, `${projectRoot}/slides.md`,
@@ -44,12 +51,14 @@ info: |
 ---`
     );
     assert.deepEqual(dependencies, ['@slidev/cli', '@slidev/theme-default']);
+    assert.deepEqual(devDependencies, testingDevDependencies);
     assert.deepEqual(
       scripts,
       {
         dev: 'slidev',
         build: 'slidev build',
-        export: 'slidev export'
+        export: 'slidev export',
+        ...testingScripts
       }
     );
   });

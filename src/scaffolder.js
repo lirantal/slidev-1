@@ -1,9 +1,13 @@
 import {promises as fs} from 'fs';
+import deepmerge from 'deepmerge';
+import scaffoldTesting from './testing-scaffolder';
 
 export default async function ({projectRoot}) {
-  await fs.writeFile(
-    `${projectRoot}/slides.md`,
-    `---
+  const [testingResults] = await Promise.all([
+    scaffoldTesting({projectRoot}),
+    fs.writeFile(
+      `${projectRoot}/slides.md`,
+      `---
 theme: default
 
 # random image from a curated Unsplash collection by Anthony
@@ -23,14 +27,18 @@ info: |
 
   Learn more at [Sli.dev](https://sli.dev)
 ---`
-  );
+    )
+  ]);
 
-  return {
-    dependencies: ['@slidev/cli', '@slidev/theme-default'],
-    scripts: {
-      dev: 'slidev',
-      build: 'slidev build',
-      export: 'slidev export'
-    }
-  };
+  return deepmerge(
+    {
+      dependencies: ['@slidev/cli', '@slidev/theme-default'],
+      scripts: {
+        dev: 'slidev',
+        build: 'slidev build',
+        export: 'slidev export'
+      }
+    },
+    testingResults
+  );
 }
