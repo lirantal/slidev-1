@@ -28,7 +28,8 @@ suite('scaffolder', () => {
     const {dependencies, devDependencies, scripts} = await scaffold({projectRoot});
 
     assert.calledWith(
-      fs.writeFile, `${projectRoot}/slides.md`,
+      fs.writeFile,
+      `${projectRoot}/slides.md`,
       `---
 theme: default
 
